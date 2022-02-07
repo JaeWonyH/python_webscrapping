@@ -101,34 +101,6 @@ print(len(song_detail_list)) #song_detail_list안의 곡수
 #json 파일로 저장
 with open('data/songs.json','w',encoding='utf-8') as file:
       json.dump(song_detail_list,file)
-#
-# #with open('data/songs.json', encoding='utf-8') as file:
-# #    songs_json = json.loads(file.read())
-#
-# #print(songs_json)
-# #song_df = pd.read_json('data/songs.json')
-# #print(song_df)
-# #print(song_df.tail())
-# #
-# # song_detail_list 읽어서 dataframe 객체 생성
-# song_df2 = pd.DataFrame(columns=['곡명', '가수', '앨범', '좋아요', '가사'])
-#
-# # 1개의 row = Series 객체 , 1개의 column = Series  객체
-# for song_detail in song_detail_list:
-#      #print(song_detail)
-#      series_object = pd.Series(song_detail)
-#      song_df2 = song_df2.append(series_object,ignore_index=True)
-# #print(song_df2)
-# print('shape',song_df2.shape)
-# print('columns',song_df2.columns)
-# print('index',song_df2.index)
-# print('values',song_df2.values[0:1])
-#
-# #가수 컬럼의 값을 선택하기
-# print(song_df2['가수'])
-#
-# # 가수 컬럼의 값별로 Row counting
-# print(song_df2['가수'].value_counts())
-#
+
 
 
