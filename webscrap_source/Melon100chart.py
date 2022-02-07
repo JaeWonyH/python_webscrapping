@@ -7,6 +7,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import json
 
 url = 'https://www.melon.com/chart/index.htm'
 req_header_dict = {
@@ -87,8 +88,11 @@ for idx,song in enumerate(song_list,1):
         song_detail_dict['가사'] = lyric
 
         song_detail_list.append(song_detail_dict)
-print(song_detail_list[:5])
-print(len(song_detail_list))
+print(song_detail_list[:3]) #3개만 출력
+print(len(song_detail_list)) #song_detail_list안의 곡수
 
+#json 파일로 저장
+with open('data/songs.json','w',encoding='utf-8') as file:
+    json.dump(song_detail_list,file)
 
 
