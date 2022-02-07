@@ -64,7 +64,6 @@ for idx,song in enumerate(song_list[:2],1):
         if soup.select("div.meta dd")[0] :
             song_detail_dict['앨범'] = soup.select("div.meta dd")[0].text
         #print(song_detail_dict)
-        song_detail_list.append(song_detail_dict)
         song_id  =song['song_id']
         #print(song_id)
         like_url = f'https://www.melon.com/commonlike/getSongLike.json?contsIds={song_id}'
@@ -74,6 +73,20 @@ for idx,song in enumerate(song_list[:2],1):
         #좋아요 건수 ajax 통신 함으로 json파일로 받음
         #print(like_res.json()['contsLike'][0]['SUMMCNT'])
         song_detail_dict['좋아요'] = like_res.json()['contsLike'][0]['SUMMCNT']
+
+        lyric_div = soup.select("div#d_video_summary")
+        if lyric_div:
+            lyric_temp = lyric_div[0].text
+            # 정규표현식을 이용하여 패턴 찾음.
+            pattern = re.compile(r'[\r\n\t]]')
+            #print(lyric)
+            #패턴(특수문자) 찾아서 대체
+            lyric= pattern.sub('',lyric_temp.strip())
+        else:
+            lyric = ''
+        song_detail_dict['가사'] = lyric
+
+        song_detail_list.append(song_detail_dict)
 print(song_detail_list)
 
 
