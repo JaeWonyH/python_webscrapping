@@ -1,13 +1,12 @@
 # melon 100 chart
 # 100곡의 노래의 제목과 songID 추출해서 list에 저장하기
 # 100곡의 노래의 상세정보를 추출해서 list와 dict에 저장해서 json 파일로 저장하기
-# json 파일을 load하여 Pandas의 DataFrame에 저장하기
-# DataFrame 객체를 DB의 Table에 저장하기
 
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
+import pandas as pd
 
 url = 'https://www.melon.com/chart/index.htm'
 req_header_dict = {
@@ -20,7 +19,7 @@ print(res.status_code)
 
 if res.ok:
     html =res.text
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html,'html.parser')
     # <div id ='tb_list'><tr><a>
     #song 몇개 있는지
     print(len(soup.select("div#tb_list tr a[href*='playSong']")))
@@ -47,6 +46,8 @@ if res.ok:
             #print(song_dict)
             song_list.append(song_dict)
     print(len(song_list))
+    #print(song_list)
+
 
 # 100곡의 노래의 상세정보를 추출해서 list와 dict에 저장해서 json 파일로 저장하기
 song_detail_list = []
@@ -55,17 +56,19 @@ for idx,song in enumerate(song_list,1):
     #song 1곡의 상세정보를 저장할 dict
     song_detail_dict = {}
     song_detail_url = song['song_detail_url']
-    res = requests.get(song_detail_url, headers=req_header_dict)
+
+    res = requests.get(song_detail_url,headers=req_header_dict)
     #print(res.status_code)
     if res.ok:
-        soup = BeautifulSoup(res.text , 'html.parser')
+        soup = BeautifulSoup(res.text, 'html.parser')
+        #print(idx, song['song_title'])
         song_detail_dict['곡명'] = song['song_title']
         if soup.select("a[href*='goArtistDetail'] span"):
             song_detail_dict['가수'] = soup.select("a[href*='goArtistDetail'] span")[0].text
         if soup.select("div.meta dd")[0] :
             song_detail_dict['앨범'] = soup.select("div.meta dd")[0].text
         #print(song_detail_dict)
-        song_id  =song['song_id']
+        song_id =song['song_id']
         #print(song_id)
         like_url = f'https://www.melon.com/commonlike/getSongLike.json?contsIds={song_id}'
         like_res = requests.get(like_url,headers=req_header_dict)
@@ -88,11 +91,44 @@ for idx,song in enumerate(song_list,1):
         song_detail_dict['가사'] = lyric
 
         song_detail_list.append(song_detail_dict)
+
 print(song_detail_list[:3]) #3개만 출력
 print(len(song_detail_list)) #song_detail_list안의 곡수
 
+# json 파일을 load하여 Pandas의 DataFrame에 저장하기
+# DataFrame 객체를 DB의 Table에 저장하기
+
 #json 파일로 저장
 with open('data/songs.json','w',encoding='utf-8') as file:
-    json.dump(song_detail_list,file)
+      json.dump(song_detail_list,file)
+#
+# #with open('data/songs.json', encoding='utf-8') as file:
+# #    songs_json = json.loads(file.read())
+#
+# #print(songs_json)
+# #song_df = pd.read_json('data/songs.json')
+# #print(song_df)
+# #print(song_df.tail())
+# #
+# # song_detail_list 읽어서 dataframe 객체 생성
+# song_df2 = pd.DataFrame(columns=['곡명', '가수', '앨범', '좋아요', '가사'])
+#
+# # 1개의 row = Series 객체 , 1개의 column = Series  객체
+# for song_detail in song_detail_list:
+#      #print(song_detail)
+#      series_object = pd.Series(song_detail)
+#      song_df2 = song_df2.append(series_object,ignore_index=True)
+# #print(song_df2)
+# print('shape',song_df2.shape)
+# print('columns',song_df2.columns)
+# print('index',song_df2.index)
+# print('values',song_df2.values[0:1])
+#
+# #가수 컬럼의 값을 선택하기
+# print(song_df2['가수'])
+#
+# # 가수 컬럼의 값별로 Row counting
+# print(song_df2['가수'].value_counts())
+#
 
 
