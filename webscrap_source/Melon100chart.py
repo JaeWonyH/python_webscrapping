@@ -49,7 +49,7 @@ if res.ok:
 
 # 100곡의 노래의 상세정보를 추출해서 list와 dict에 저장해서 json 파일로 저장하기
 song_detail_list = []
-for idx,song in enumerate(song_list[:2],1):
+for idx,song in enumerate(song_list,1):
     #print(song['song_detail_url'])
     #song 1곡의 상세정보를 저장할 dict
     song_detail_dict = {}
@@ -87,7 +87,8 @@ for idx,song in enumerate(song_list[:2],1):
         song_detail_dict['가사'] = lyric
 
         song_detail_list.append(song_detail_dict)
-print(song_detail_list)
+print(song_detail_list[:5])
+print(len(song_detail_list))
 
 
 
