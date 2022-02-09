@@ -80,11 +80,21 @@ table_df.index = np.arange(1, len(table_df)+1)
 try:
     # dialect+driver://username:password@host:port/database
     engine = create_engine('mysql+pymysql://python:python@localhost:3306/python_db',encoding='utf-8')
-    #print(engine)
     conn = engine.connect()
 
-    #song_df(DataFrame객체)를 songs 테이블로 저장 : to_sql() 함수사용
-    song_df.to_sql(name = 'songs', con=engine, if_exists='replace', index=False)
+    #table_df(DataFrame객체)를 songs100 테이블로 저장 : to_sql() 함수사용
+    table_df.to_sql(name = 'songs100', con=engine, if_exists='replace', index=True,\
+                    index_label='id',
+                    dtype={
+                        #Datatype 변경
+                        'id' : sqlalchemy.types.INTEGER(),
+                        'title': sqlalchemy.types.VARCHAR(200),
+                        'singer': sqlalchemy.types.VARCHAR(100),
+                        'album' : sqlalchemy.types.VARCHAR(200),
+                        'likes' : sqlalchemy.types.BigInteger,
+                        'lyric' : sqlalchemy.types.VARCHAR(3000)
+                    }
+                    )
 finally:
     conn.close()
     engine.dispose()
