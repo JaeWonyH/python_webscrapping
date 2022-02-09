@@ -44,6 +44,27 @@ age = today.year - birth_1.year - ((today.month,today.day)<(birth_1.month,birth_
 age2 = today.year - birth_2.year - ((today.month,today.day)<(birth_2.month,birth_2.day)) #Ture이므로 1로 계산(아직 생일 안지남)
 print(age,age2)
 
+#가장 나이가 어린 사람은 누구인지
+print(member_df.loc[member_df['year']==member_df['year'].max(),['이름','정당']])
+#국회의원 나이 계산 함수 정의하기
+#인자로 받는 birth는 date객체
+def calc_age(birth):
+    #현재날짜
+    today = date.today()
+    age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+    return age
+
+#나이 계산할 list 생성
+age_list =[]
+#row별로 년,월,일 컬럼의 값으로 나이를 계산하고 그 결과(나이)값을 list에 append
+for idx,row in member_df.iterrows():
+    age = calc_age(date(row['year'],row['month'],row['day']))
+    age_list.append(age)
+
+print(age_list)
+member_df['나이'] = age_list
+print(member_df.loc[0:3,['이름','나이']])
+
 
 
 
