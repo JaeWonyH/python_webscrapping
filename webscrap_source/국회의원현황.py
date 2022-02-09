@@ -28,10 +28,12 @@ if res.ok :
             member_id = matched.group(1)
         member_id_list.append(member_id) #국회의원 id append
 
+print('스크래핑 시작')
 member_detail_list = []
-for idx, mem_id in enumerate(member_id_list[:5],1):
+for idx, mem_id in enumerate(member_id_list,1):
     detail_url = f'https://www.assembly.go.kr/assm/memPop/memPopup.do?dept_cd={mem_id}' #상세정보 url
     res = requests.get(detail_url)
+    print(idx,detail_url)
     if res.ok:
         soup = BeautifulSoup(res.text, 'html.parser')
 
@@ -56,6 +58,9 @@ for idx, mem_id in enumerate(member_id_list[:5],1):
 
         # 1명의 정보를 저장된 dict를 list에 추가하기
         member_detail_list.append(member_detail_dict)
+
+print(len(member_detail_list))
+print('스크래핑 끝')
 
 
 
