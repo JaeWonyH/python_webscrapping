@@ -44,7 +44,20 @@ for idx, mem_id in enumerate(member_id_list[:5],1):
             pattern = re.compile(f'[\n\r\t]') #특수문자 패턴
             dd_text = pattern.sub('',dd_tag.text.strip()).replace(' ','') #dd_tag의 특수문자 empty string으로변환
             dd_list.append(dd_text)
-        print(dd_list)
+
+        member_detail_dict = dict(zip(dt_list,dd_list)) #zip으로 상세정보 묶어주기
+
+        for div_tag in soup.select('div.profile') :
+            member_detail_dict['이름'] = div_tag.find('h4').text #국회의원 이름
+            img_tag = div_tag.select('img')
+            if img_tag:
+                member_detail_dict['이미지'] = urljoin(detail_url,img_tag[0]['src']) #국회의원 이미지 url join
+            member_detail_dict['생년월일'] = div_tag.select_one('li:nth-of-type(4)').text #국회의원 생년월일
+
+        # 1명의 정보를 저장된 dict를 list에 추가하기
+        member_detail_list.append(member_detail_dict)
+
+
 
 
 
