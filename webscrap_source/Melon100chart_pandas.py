@@ -51,11 +51,11 @@ song_df = pd.read_json('data/songs.json')
 pymysql.install_as_MySQLdb()  #pymysql과 sqlAlchemy 연동
 from sqlalchemy import create_engine
 
-print(song_df.head())
+#print(song_df.head())
 try:
     # dialect+driver://username:password@host:port/database
     engine = create_engine('mysql+pymysql://python:python@localhost:3306/python_db',encoding='utf-8')
-    print(engine)
+    #print(engine)
     conn = engine.connect()
 
     #song_df(DataFrame객체)를 songs 테이블로 저장 : to_sql() 함수사용
@@ -63,6 +63,33 @@ try:
 finally:
     conn.close()
     engine.dispose()
+
+### Table에 저장
+# 컬럼명을 영문으로 변경
+# 인덱스를 1부터 시작하도록 변경하고 인덱스(DataFrame)가 Table의 PK(Primary Key)가 되도록 설정
+# 기존 DataFrame 객체의 본사본을 만들기(table_df = song_df로 하면 안됨 / 같은 메모리 주소 참조)
+table_df = song_df.copy()
+
+#print(table_df.columns) # Index(['곡명', '가수', '앨범', '좋아요', '가사'], dtype='object')
+table_df.columns = ['title','singer','album','likes','lyric'] #컬럼명 영문으로 변경
+
+#인덱스 1부터 시작 ,PK 설정
+import numpy as np
+
+table_df.index = np.arange(1, len(table_df)+1)
+try:
+    # dialect+driver://username:password@host:port/database
+    engine = create_engine('mysql+pymysql://python:python@localhost:3306/python_db',encoding='utf-8')
+    #print(engine)
+    conn = engine.connect()
+
+    #song_df(DataFrame객체)를 songs 테이블로 저장 : to_sql() 함수사용
+    song_df.to_sql(name = 'songs', con=engine, if_exists='replace', index=False)
+finally:
+    conn.close()
+    engine.dispose()
+
+
 
 
 
