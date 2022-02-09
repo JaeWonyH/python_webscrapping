@@ -2,6 +2,8 @@
 
 import pandas as pd
 from webscrap_source.Melon100chart import song_detail_list
+import pymysql
+import sqlalchemy
 
 song_df2 = pd.DataFrame(columns=['곡명','가수','앨범','좋아요','가사'])
 
@@ -40,9 +42,29 @@ song_df = pd.read_json('data/songs.json')
 # 조건식을 만족하는 행과 열을 선택
 
 # Slicing : 인덱스가 0부터 5까지의 행과 모든 열을 선택하기
-print(song_df.loc[0:5]) # song_df.loc[0:5,:])
+#print(song_df.loc[0:5]) # song_df.loc[0:5,:])
 
 # Slicing : 인덱스가 0부터 10까지의 행과 모든 열을 선택하기 , 1개의 행을 skip
-print(song_df.loc[0:10:2]) # song_df.loc[0:10:2,:]
+#print(song_df.loc[0:10:2]) # song_df.loc[0:10:2,:]
+
+### sqlAlchemy와 Pymysql을 사용하여 DataFrame객체를 DB에 저장하기
+pymysql.install_as_MySQLdb()  #pymysql과 sqlAlchemy 연동
+from sqlalchemy import create_engine
+
+print(song_df.head())
+try:
+    # dialect+driver://username:password@host:port/database
+    engine = create_engine('mysql+pymysql://python:python@localhost:3306/python_db',encoding='utf-8')
+    print(engine)
+    conn = engine.connect()
+
+    #song_df(DataFrame객체)를 songs 테이블로 저장 : to_sql() 함수사용
+    song_df.to_sql(name = 'songs', con=engine, if_exists='replace', index=False)
+finally:
+    conn.close()
+    engine.dispose()
+
+
+
 
 
